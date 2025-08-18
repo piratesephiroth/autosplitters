@@ -61,7 +61,6 @@ init
     {
         throw new Exception("Couldn't find process!");
     }
-
 }
 
 update
@@ -117,7 +116,7 @@ reset
     // in attract mode,
     // or game over
     if ( vars.watchers["gameState"].Current <= 1
-      || (vars.watchers["gameState"].Current== 11
+      || (vars.watchers["gameState"].Current == 11
       && (vars.watchers["p1RoundsWon"].Current + vars.watchers["p2RoundsWon"].Current == 0)) )
     {
         print("TIMER RESET");
