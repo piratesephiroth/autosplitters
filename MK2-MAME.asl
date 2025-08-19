@@ -3,13 +3,12 @@
 * By piratesephiroth.                                                                   *
 \***************************************************************************************/
 
-state("mame")
-{
-}
+state("mame"){}
+state("mame64"){}
 
 startup
 {
-    refreshRate = 60;
+    refreshRate = 80; // to be on the safe side
     settings.Add("ladderSplit",false,"Split at tower");
     settings.Add("onlyShao",false,"Ignore everything, split only at Shao Kahn's defeat");
 }
@@ -79,13 +78,7 @@ update
     }
     
     vars.watchers.UpdateAll(game);
-    
-    // reset timer when start is pressed after Shao Kahn's defeat
-    // (Game Over -> Select Your Fighter)
-    if (vars.watchers["gameState"].Current == 4 && vars.watchers["gameState"].Old == 11)
-    {
-        timer.CurrentPhase = TimerPhase.NotRunning;
-    }
+
 }
 
 start
@@ -102,7 +95,7 @@ start
          && vars.watchers["unknown"].Old == 0x29
          && vars.watchers["unknown"].Current == 0x28)
     {
-        print("TIMER START");
+        print("START TIMER");
         return true;
     }
     
@@ -112,14 +105,22 @@ start
 reset
 {
     // reset timer if game is:
-    // booting up,
-    // in attract mode,
-    // or game over
+    // booting up;
+    // in attract mode;
+    // game over;
     if ( vars.watchers["gameState"].Current <= 1
       || (vars.watchers["gameState"].Current == 11
       && (vars.watchers["p1RoundsWon"].Current + vars.watchers["p2RoundsWon"].Current == 0)) )
     {
-        print("TIMER RESET");
+        print("RESET TIMER");
+        return true;
+    }
+    
+    // reset timer when start is pressed after Shao Kahn's defeat
+    // (Game Over -> Select Your Fighter)
+    if (vars.watchers["gameState"].Current == 4 && vars.watchers["gameState"].Old == 11)
+    {
+        timer.CurrentPhase = TimerPhase.Running;
         return true;
     }
 }
@@ -131,7 +132,7 @@ split
     {
         if (vars.watchers["ladderPos"].Current > vars.watchers["ladderPos"].Old)
         {
-            print("TOWER");
+            print("TOWER SPLIT");
             return true;
         }
     }
@@ -141,7 +142,7 @@ split
     {
         if (vars.watchers["p1RoundsWon"].Current == 2 && (vars.watchers["p1RoundsWon"].Current != vars.watchers["p1RoundsWon"].Old)) {
             vars.matchWon = true;
-            print ("P1 WON!");
+            print ("P1 WON");
         }
     }
     
@@ -150,7 +151,7 @@ split
         if (vars.watchers["p2RoundsWon"].Current == 2 && (vars.watchers["p2RoundsWon"].Current != vars.watchers["p2RoundsWon"].Old))
         {
             vars.matchWon = true;
-            print ("P2 WON!");
+            print ("P2 WON");
         }
     }
     
@@ -160,14 +161,13 @@ split
         if (vars.watchers["gameState"].Current == 5 && !settings["onlyShao"] && !settings["ladderSplit"])
         {
             vars.matchWon = false;
-            print(@"WON THE MATCH! P1=" + vars.watchers["p1RoundsWon"].Current.ToString() +
-                   "; P2=" + vars.watchers["p2RoundsWon"].Current.ToString() );
+            print("VICTORY SPLIT");
             return true;
         }
         if (vars.watchers["gameState"].Current== 11)
         {
             vars.matchWon = false;
-            print("ALL DONE!");
+            print("SHAO KAHN'S RULE IS OVER");
             return true;
         }
     }
