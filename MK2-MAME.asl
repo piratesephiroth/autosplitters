@@ -37,7 +37,7 @@ init
         {
             offset = -0x16374;
         }
-        else if (game.MainWindowTitle.Contains("[mk2r2]"))
+        else if (game.MainWindowTitle.Contains("[mk2r2"))
         {
             offset = -0x16380;
         }
