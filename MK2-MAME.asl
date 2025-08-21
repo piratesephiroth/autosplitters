@@ -23,7 +23,7 @@ init
         long p2State = 0xc1b8;
         long p1rounds = 0xc062;
         long p2rounds = 0xc1dc;
-        long ladderPos = 0xc366; //for v1.1, 0xc
+        long ladderPos = 0xc366;
         
         string sig = "4D 3C 2B 1A 00 00 ?? 00";
         int offset = -0x16386; // for v3.x
