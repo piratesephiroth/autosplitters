@@ -15,8 +15,33 @@ startup
 
 init
 {
-    Action<int, string> ScanMemoryAndUpdateAddresses = (offset, sig) =>
+    Action ScanMemoryAndUpdateAddresses = () =>
     {
+        long gstate = 0xc03a;
+        long unknown = 0xb76a;
+        long p1State = 0xc03e;
+        long p2State = 0xc1b8;
+        long p1rounds = 0xc062;
+        long p2rounds = 0xc1dc;
+        long ladderPos = 0xc366; //for v1.1, 0xc
+        
+        string sig = "4D 3C 2B 1A 00 00 ?? 00";
+        int offset = -0x16386; // for v3.x
+        
+        if (game.MainWindowTitle.Contains("[mk2r11]"))
+        {
+            offset = -0x1638c;
+            ladderPos += 2;
+        }
+        else if (game.MainWindowTitle.Contains("[mk2r14]"))
+        {
+            offset = -0x16374;
+        }
+        else if (game.MainWindowTitle.Contains("[mk2r2]"))
+        {
+            offset = -0x16380;
+        }
+        
         print("Scanning memory...");
         foreach (var page in game.MemoryPages(true))
         {
@@ -30,14 +55,6 @@ init
                 break;
             }
         }
-        
-        long gstate = 0xc03a;
-        long unknown = 0xb76a;
-        long p1State = 0xc03e;
-        long p2State = 0xc1b8;
-        long p1rounds = 0xc062;
-        long p2rounds = 0xc1dc;
-        long ladderPos = 0xc366;
         
         vars.watchers = new MemoryWatcherList
         {
@@ -74,11 +91,10 @@ update
     
     if (vars.scanNeeded )
     {
-        vars.ScanMemoryAndUpdateAddresses(-0x16386, "4D 3C 2B 1A 00 00 00 00 00 00 00 00 00 00 00 00");
+        vars.ScanMemoryAndUpdateAddresses();
     }
     
     vars.watchers.UpdateAll(game);
-
 }
 
 start
