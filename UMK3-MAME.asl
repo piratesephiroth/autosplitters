@@ -1,5 +1,5 @@
 /***************************************************************************************\
-* Ultimate Mortal Kombat 3 (MAME) AutoSplitter.                                                  *
+* Ultimate Mortal Kombat 3 (MAME) AutoSplitter.                                         *
 * By piratesephiroth.                                                                   *
 \***************************************************************************************/
 
@@ -15,8 +15,24 @@ startup
 
 init
 {
-    Action<int, string> ScanMemoryAndUpdateAddresses = (offset, sig) =>
+    Action ScanMemoryAndUpdateAddresses = () =>
     {
+        string sig = "4D 3C 2B 1A 00 00 ?? 00";
+        int offset = -0xc662;
+        long gstate = 0xc12c;
+        long p1State = 0xc134;
+        long p2State = 0xc2aa;
+        long p1rounds = 0xc152;
+        long p2rounds = 0xc2c8;
+        long ladderPos = 0xc45a;
+        long ladderSel = 0xc459;
+        
+        if (game.MainWindowTitle.Contains("[umk3r10]"))
+        {
+            offset += 2;
+            print("detected r1.0");
+        }
+        
         print("Scanning memory...");
         foreach (var page in game.MemoryPages(true))
         {
@@ -30,14 +46,6 @@ init
                 break;
             }
         }
-        
-        long gstate = 0xc12c;
-        long p1State = 0xc134;
-        long p2State = 0xc2aa;
-        long p1rounds = 0xc152;
-        long p2rounds = 0xc2c8;
-        long ladderPos = 0xc45a;
-        long ladderSel = 0xc459;
         
         vars.watchers = new MemoryWatcherList
         {
@@ -74,7 +82,7 @@ update
     
     if (vars.scanNeeded )
     {
-        vars.ScanMemoryAndUpdateAddresses(-0xc662, "4D 3C 2B 1A 00 00 00 00 00");
+        vars.ScanMemoryAndUpdateAddresses();
     }
     
     vars.watchers.UpdateAll(game);
@@ -82,12 +90,12 @@ update
 
 start
 {
+    //print("game state: " + vars.watchers["gameState"].Current.ToString("X"));
     // start timer only at the "Select your Destiny" screen
     if (vars.watchers["gameState"].Current != 13)
     {
         return false;
     }
-    //print("TOWER SELECT");
     // start timer after selecting the tower
     if (vars.watchers["ladderSel"].Current == 255)
     {
@@ -109,10 +117,9 @@ reset
         print("RESET TIMER");
         return true;
     }
-    
     // reset timer when start is pressed after Shao Kahn's defeat
-    // (Game Over -> Select Your Fighter)
-    if (vars.watchers["gameState"].Current == 4 && vars.watchers["gameState"].Old == 11)
+    // (Game Over -> Select Mode of Play)
+    if (vars.watchers["gameState"].Current == 20 && vars.watchers["gameState"].Old == 11)
     {
         timer.CurrentPhase = TimerPhase.Running;
         return true;
@@ -139,7 +146,6 @@ split
             print ("P1 WON");
         }
     }
-    
     if (vars.watchers["p2State"].Current == 1 || vars.watchers["p2State"].Old == 1)
     {
         if (vars.watchers["p2RoundsWon"].Current == 2 && (vars.watchers["p2RoundsWon"].Current != vars.watchers["p2RoundsWon"].Old))
