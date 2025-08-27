@@ -64,7 +64,7 @@ init
     vars.ScanMemoryAndUpdateAddresses = ScanMemoryAndUpdateAddresses;
     vars.scanNeeded = true;
     vars.matchWon = false;
-    vars.ignoreReset = false;
+    vars.disableReset = false;
     
     game.Refresh();
     if (!game.MainWindowTitle.Contains("Ultimate Mortal Kombat 3"))
@@ -92,31 +92,23 @@ update
     
     if (settings["diagCantReset"])
     {
-        // disable timer reset after leaving Diag menu
-        if (!vars.ignoreReset && vars.watchers["gameState"].Current == 8)
+        // if Diag menu, disable timer reset
+        if (!vars.disableReset && vars.watchers["gameState"].Current == 8)
         {
-            print("DIAG, RESET DISABLED");
-            vars.ignoreReset = true;
-        }
-        
-        // re-enable reset at Mode of Play screen
-        if (vars.ignoreReset && vars.watchers["gameState"].Current == 20)
-        {
-            print("RESET RE-ENABLED");
-            vars.ignoreReset = false;
+            print("DIAG MENU, RESET DISABLED");
+            vars.disableReset = true;
         }
     }
 }
 
 start
 {
-    //print("game state: " + vars.watchers["gameState"].Current.ToString("X"));
     // start timer only at the "Select your Destiny" screen
     if (vars.watchers["gameState"].Current != 13)
     {
         return false;
     }
-    // start timer after selecting the tower
+    // start timer right after selecting the tower
     if (vars.watchers["ladderSel"].Current == 255)
     {
         print("START TIMER");
@@ -126,18 +118,16 @@ start
 
 reset
 {
-    // reset timer if game is:
-    // booting up;
-    // in attract mode;
-    // game over;
-    
-    if (vars.ignoreReset)
-    {
-        return false;
-    }
-    
+    // reset timer if game is booting up
     if (vars.watchers["gameState"].Current == 0 && vars.watchers["gameState"].Old != 0)
     {
+        if (vars.disableReset)
+        {
+            vars.disableReset = false;
+            print("RESET ENABLED AGAIN");
+            return false;
+        }
+        
         print("RESET TIMER");
         return true;
     }
