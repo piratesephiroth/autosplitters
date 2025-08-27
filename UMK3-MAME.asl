@@ -11,6 +11,8 @@ startup
     refreshRate = 80; // to be on the safe side
     settings.Add("ladderSplit",false,"Split at tower");
     settings.Add("onlyShao",false,"Ignore everything, split only at Shao Kahn's defeat");
+    settings.Add("diagCantReset",false,"Don't reset timer after leaving the Diagnostics Menu");
+
 }
 
 init
@@ -62,6 +64,7 @@ init
     vars.ScanMemoryAndUpdateAddresses = ScanMemoryAndUpdateAddresses;
     vars.scanNeeded = true;
     vars.matchWon = false;
+    vars.ignoreReset = false;
     
     game.Refresh();
     if (!game.MainWindowTitle.Contains("Ultimate Mortal Kombat 3"))
@@ -86,6 +89,23 @@ update
     }
     
     vars.watchers.UpdateAll(game);
+    
+    if (settings["diagCantReset"])
+    {
+        // disable timer reset after leaving Diag menu
+        if (!vars.ignoreReset && vars.watchers["gameState"].Current == 8)
+        {
+            print("DIAG, RESET DISABLED");
+            vars.ignoreReset = true;
+        }
+        
+        // re-enable reset at Mode of Play screen
+        if (vars.ignoreReset && vars.watchers["gameState"].Current == 20)
+        {
+            print("RESET RE-ENABLED");
+            vars.ignoreReset = false;
+        }
+    }
 }
 
 start
@@ -110,6 +130,12 @@ reset
     // booting up;
     // in attract mode;
     // game over;
+    
+    if (vars.ignoreReset)
+    {
+        return false;
+    }
+
     if ( vars.watchers["gameState"].Current <= 1
       || (vars.watchers["gameState"].Current == 11
       && (vars.watchers["p1RoundsWon"].Current + vars.watchers["p2RoundsWon"].Current == 0)) )
@@ -117,6 +143,7 @@ reset
         print("RESET TIMER");
         return true;
     }
+
 }
 
 split
