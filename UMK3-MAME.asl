@@ -135,15 +135,12 @@ reset
     {
         return false;
     }
-
-    if ( vars.watchers["gameState"].Current <= 1
-      || (vars.watchers["gameState"].Current == 11
-      && (vars.watchers["p1RoundsWon"].Current + vars.watchers["p2RoundsWon"].Current == 0)) )
+    
+    if (vars.watchers["gameState"].Current == 0 && vars.watchers["gameState"].Old != 0)
     {
         print("RESET TIMER");
         return true;
     }
-
 }
 
 split
