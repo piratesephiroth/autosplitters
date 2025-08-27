@@ -117,13 +117,6 @@ reset
         print("RESET TIMER");
         return true;
     }
-    // reset timer when start is pressed after Shao Kahn's defeat
-    // (Game Over -> Select Mode of Play)
-    if (vars.watchers["gameState"].Current == 20 && vars.watchers["gameState"].Old == 11)
-    {
-        timer.CurrentPhase = TimerPhase.Running;
-        return true;
-    }
 }
 
 split
