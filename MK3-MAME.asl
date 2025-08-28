@@ -11,6 +11,7 @@ startup
     refreshRate = 80; // to be on the safe side
     settings.Add("ladderSplit",false,"Split at tower");
     settings.Add("onlyShao",false,"Ignore everything, split only at Shao Kahn's defeat");
+    settings.Add("diagCantReset",false,"Don't reset timer after leaving the Diagnostics Menu");
 }
 
 init
@@ -71,6 +72,7 @@ init
     vars.ScanMemoryAndUpdateAddresses = ScanMemoryAndUpdateAddresses;
     vars.scanNeeded = true;
     vars.matchWon = false;
+    vars.disableReset = false;
     
     game.Refresh();
     if (!game.MainWindowTitle.Contains("Mortal Kombat 3"))
@@ -95,6 +97,16 @@ update
     }
     
     vars.watchers.UpdateAll(game);
+    
+    if (settings["diagCantReset"])
+    {
+        // if Diag menu, disable timer reset
+        if (!vars.disableReset && vars.watchers["gameState"].Current == 8)
+        {
+            print("DIAG MENU, RESET DISABLED");
+            vars.disableReset = true;
+        }
+    }
 }
 
 start
@@ -115,23 +127,17 @@ start
 
 reset
 {
-    // reset timer if game is:
-    // booting up;
-    // in attract mode;
-    // game over;
-    if ( vars.watchers["gameState"].Current <= 1
-      || (vars.watchers["gameState"].Current == 11
-      && (vars.watchers["p1RoundsWon"].Current + vars.watchers["p2RoundsWon"].Current == 0)) )
+    // reset timer if game is booting up
+    if (vars.watchers["gameState"].Current == 0 && vars.watchers["gameState"].Old != 0)
     {
+        if (vars.disableReset)
+        {
+            vars.disableReset = false;
+            print("RESET ENABLED AGAIN");
+            return false;
+        }
+        
         print("RESET TIMER");
-        return true;
-    }
-    
-    // reset timer when start is pressed after Shao Kahn's defeat
-    // (Game Over -> Select Your Fighter)
-    if (vars.watchers["gameState"].Current == 4 && vars.watchers["gameState"].Old == 11)
-    {
-        timer.CurrentPhase = TimerPhase.Running;
         return true;
     }
 }
