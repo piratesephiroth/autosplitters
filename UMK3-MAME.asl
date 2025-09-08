@@ -5,6 +5,7 @@
 
 state("mame"){}
 state("mame64"){}
+state("mamearcade"){}
 
 startup
 {
@@ -90,6 +91,7 @@ update
     
     vars.watchers.UpdateAll(game);
     
+    
     if (settings["diagCantReset"])
     {
         // if Diag menu, disable timer reset
@@ -109,7 +111,7 @@ start
         return false;
     }
     // start timer right after selecting the tower
-    if (vars.watchers["ladderSel"].Current == 255)
+    if (vars.watchers["ladderSel"].Current != 0)
     {
         print("START TIMER");
         return true;
