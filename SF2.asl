@@ -10,6 +10,7 @@
 
 state("mame"){}
 state("mame64"){}
+state("mamearcade"){}
 
 
 startup
