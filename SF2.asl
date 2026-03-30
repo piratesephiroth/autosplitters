@@ -171,7 +171,7 @@ init
             print("  => detected Street Fighter II - Hyper Fighting");
         }
         
-        
+        long membase = 0;
         print("Scanning memory...");
         foreach (var page in game.MemoryPages(true))
         {
@@ -179,23 +179,27 @@ init
             var ptr = scanner.Scan(new SigScanTarget(offset, sig));
             if (ptr != IntPtr.Zero)
             { 
-                vars.membase = (long)ptr;
-                print("  => membase found: " + game.ProcessName + ".exe+0x" + vars.membase.ToString("X"));
+                membase = (long)ptr;
+                print("  => membase found: " + game.ProcessName + ".exe+0x" + membase.ToString("X"));
                 
                 vars.scanNeeded = false;
                 break;
             }
         }
         
+        if (membase == 0) {
+            throw new Exception("  => Couldn't find membase in MAME!");
+        }
+        
         vars.watchers = new MemoryWatcherList
         {
-            new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(p1RoundsWon) )) { Name = "p1RoundsWon" },
-            new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(isCharacterSelected) )) { Name = "isCharacterSelected" },
-            new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(level) )) { Name = "level" },
-            new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(bonusStagesCleared) )) { Name = "bonusStagesCleared" },
-            new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(wins) )) { Name = "wins" },
-            new MemoryWatcher<ushort>((IntPtr)(vars.membase + gameState0 )) { Name = "gameState0" },
-            new MemoryWatcher<ushort>((IntPtr)(vars.membase + gameState1 )) { Name = "gameState1" },
+            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(p1RoundsWon) )) { Name = "p1RoundsWon" },
+            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(isCharacterSelected) )) { Name = "isCharacterSelected" },
+            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(level) )) { Name = "level" },
+            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(bonusStagesCleared) )) { Name = "bonusStagesCleared" },
+            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(wins) )) { Name = "wins" },
+            new MemoryWatcher<ushort>((IntPtr)(membase + gameState0 )) { Name = "gameState0" },
+            new MemoryWatcher<ushort>((IntPtr)(membase + gameState1 )) { Name = "gameState1" },
         };
      };
      
