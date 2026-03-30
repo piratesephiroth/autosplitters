@@ -252,8 +252,9 @@ reset
 
 split
 {
-    if (vars.watchers["p1RoundsWon"].Current == 2 && vars.watchers["p1RoundsWon"].Old == 1
-    && vars.watchers["level"].Current == 8)
+    if (vars.watchers["p1RoundsWon"].Current == 2
+     && vars.watchers["p1RoundsWon"].Old == 1
+     && vars.watchers["level"].Current == 8)
     {
         print("  => Dictator defeated!");
         return true;
@@ -276,6 +277,5 @@ split
     {
         print("  => match won!");
         return true;
-        
     }
 }
