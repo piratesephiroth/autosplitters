@@ -42,9 +42,9 @@ init
         int isCharacterSelected = 0x89d0;
         int level = 0x89bf;
         int bonusStagesCleared = 0x89ee;
+        int wins = 0x89ed;
         int gameState0 = 0x8000;
         int gameState1 = 0x8004;
-        int matchState = 0x8008;
 
  
         if (game.MainWindowTitle.Contains("[sf2]")
@@ -94,6 +94,7 @@ init
             isCharacterSelected = 0x89dc;
             level = 0x89cb;
             bonusStagesCleared = 0x89fa;
+            wins = 0x89f9;
             print("  => detected Street Fighter II - The World Warrior");
         }
         
@@ -192,9 +193,9 @@ init
             new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(isCharacterSelected) )) { Name = "isCharacterSelected" },
             new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(level) )) { Name = "level" },
             new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(bonusStagesCleared) )) { Name = "bonusStagesCleared" },
+            new MemoryWatcher<byte>((IntPtr)(vars.membase + FixAddress(wins) )) { Name = "wins" },
             new MemoryWatcher<ushort>((IntPtr)(vars.membase + gameState0 )) { Name = "gameState0" },
             new MemoryWatcher<ushort>((IntPtr)(vars.membase + gameState1 )) { Name = "gameState1" },
-            new MemoryWatcher<ushort>((IntPtr)(vars.membase + matchState )) { Name = "matchState" },
         };
      };
      
@@ -270,10 +271,8 @@ split
         print("  => bonus stage completed!");
         return true;
     }
-    
-    if ( vars.watchers["p1RoundsWon"].Current == 2
-      && vars.watchers["matchState"].Current == 18
-      && vars.watchers["matchState"].Old != 18 )
+
+    if (vars.watchers["wins"].Current > vars.watchers["wins"].Old)
     {
         print("  => match won!");
         return true;
