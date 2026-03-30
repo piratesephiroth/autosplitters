@@ -1,2 +1,2 @@
 # autosplitters
-LiveSplit Autosplitters for old Mortal Kombat games
+LiveSplit Autosplitters for classic games
