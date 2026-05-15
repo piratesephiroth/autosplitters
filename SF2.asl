@@ -6,6 +6,8 @@
 *    Street Fighter II: The World Warrior and its bootlegs                              *
 *    Street Fighter II: Champion Editon and its bootlegs                                *
 *    Street Fighter II: Hyper Fighting                                                  *
+*    Super Street Fighter II                                                            *
+*    Super Street Fighter II Turbo                                                      *
 \***************************************************************************************/
 
 state("mame"){}
@@ -42,11 +44,11 @@ init
         int isCharacterSelected = 0x89d0;
         int level = 0x89bf;
         int bonusStagesCleared = 0x89ee;
-        int wins = 0x89ed;
+        int wins = 0x89cd; // 89ed?
         int gameState0 = 0x8000;
         int gameState1 = 0x8004;
-
- 
+        
+        
         if (game.MainWindowTitle.Contains("[sf2]")
         ||  game.MainWindowTitle.Contains("[sf2b]")
         ||  game.MainWindowTitle.Contains("[sf2b2]")
@@ -171,6 +173,59 @@ init
             print("  => detected Street Fighter II - Hyper Fighting");
         }
         
+        
+        
+        if (game.MainWindowTitle.Contains("[ssf2]")
+        ||  game.MainWindowTitle.Contains("[ssf2a]")
+        ||  game.MainWindowTitle.Contains("[ssf2ar1]")
+        ||  game.MainWindowTitle.Contains("[ssf2h]")
+        ||  game.MainWindowTitle.Contains("[ssf2j]")
+        ||  game.MainWindowTitle.Contains("[ssf2jr1]")
+        ||  game.MainWindowTitle.Contains("[ssf2jr2]")
+        ||  game.MainWindowTitle.Contains("[ssf2r1]")
+        ||  game.MainWindowTitle.Contains("[ssf2u]")
+        ||  game.MainWindowTitle.Contains("[ssf2ud]")
+        ||  game.MainWindowTitle.Contains("[ssf2us2]") )
+        {
+            sig = "00 00 00 00 00 00 90 09 FF 00 50 02 FF 00 90 02" +
+                  "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";
+            
+            p1RoundsWon = 0x875e;
+            isCharacterSelected = 0x8be0;
+            level = 0x8bcf;
+            wins = 0x8bd1;
+            bonusStagesCleared = 0x8c02;
+            
+            print("  => detected Super Street Fighter II: The New Challengers");
+        }
+        
+        
+        if (game.MainWindowTitle.Contains("[ssf2t]")
+        ||  game.MainWindowTitle.Contains("[ssf2ta]")
+        ||  game.MainWindowTitle.Contains("[ssf2tad]")
+        ||  game.MainWindowTitle.Contains("[ssf2th]")
+        ||  game.MainWindowTitle.Contains("[ssf2tu]")
+        ||  game.MainWindowTitle.Contains("[ssf2tur1]")
+        ||  game.MainWindowTitle.Contains("[ssf2xj]")
+        ||  game.MainWindowTitle.Contains("[ssf2xjr1]")
+        ||  game.MainWindowTitle.Contains("[ssf2xjr1d]")
+        ||  game.MainWindowTitle.Contains("[ssf2xjr1r]") )
+        {
+            sig = "00 00 00 00 00 00 D6 09 FF 00 50 02 FF 00 90 02" +
+                  "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";
+            
+            p1RoundsWon = 0x87de;
+            isCharacterSelected = 0x8c60;
+            level = 0x8c4f;
+            wins = 0x8c51;
+            bonusStagesCleared = 0;          
+            
+            print("  => detected Super Street Fighter II - Turbo");
+        
+        }
+        
+        
+        
         long membase = 0;
         print("Scanning memory...");
         foreach (var page in game.MemoryPages(true))
@@ -218,7 +273,7 @@ update
         vars.scanNeeded = true;
         return false;
     }
-
+    
     if (vars.scanNeeded )
     {
         vars.ScanMemoryAndUpdateAddresses();
@@ -236,7 +291,7 @@ start
     {
         return false;
     }
-
+    
     if (vars.watchers["isCharacterSelected"].Current == 1
     &&  vars.watchers["isCharacterSelected"].Old == 0)
     {
@@ -264,18 +319,18 @@ split
         print("  => Dictator defeated!");
         return true;
     }
-
+    
     if (settings["onlyDictator"])
     {
         return false;
     }
-
+    
     if (vars.watchers["bonusStagesCleared"].Current > vars.watchers["bonusStagesCleared"].Old)
     {
         print("  => bonus stage completed!");
         return true;
     }
-
+    
     if (vars.watchers["wins"].Current > vars.watchers["wins"].Old)
     {
         print("  => match won!");
