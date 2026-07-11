@@ -13,7 +13,7 @@ startup
 {
     refreshRate = 80; // to be on the safe side
     
-    settings.Add("ladderSplit",false,"Split at tower");
+    settings.Add("endOfMatchSplit",false,"Split after end of match");
     settings.Add("onlyShao",false,"Ignore everything, split only at Shao Kahn's defeat");
     settings.Add("diagCantReset",false,"Don't reset timer after leaving the Diagnostics Menu");
 }
@@ -218,11 +218,11 @@ reset
 split
 {
     // tower, when ladder position goes up
-    if (settings["ladderSplit"] && !settings["onlyShao"])
+    if (settings["endOfMatchSplit"] && !settings["onlyShao"])
     {
         if (vars.watchers["ladderPos"].Current > vars.watchers["ladderPos"].Old)
         {
-            print("TOWER SPLIT");
+            print("END OF MATCH SPLIT");
             return true;
         }
     }
@@ -251,7 +251,7 @@ split
         if (vars.watchers["gameState"].Current == 5)
         {
             vars.matchWon = false;
-            if (!settings["onlyShao"] && !settings["ladderSplit"])
+            if (!settings["onlyShao"] && !settings["endOfMatchSplit"])
             {
                 print("VICTORY SPLIT");
                 return true;
