@@ -42,7 +42,7 @@ init
         
         int p1RoundsWon = 0x864e;
         int isCharacterSelected = 0x89d0;
-        int level = 0x89bf;
+        int background = 0x89bf;
         int bonusStagesCleared = 0x89ee;
         int wins = 0x89ed;
         int gameState0 = 0x8000;
@@ -94,7 +94,7 @@ init
 
             p1RoundsWon = 0x8656;
             isCharacterSelected = 0x89dc;
-            level = 0x89cb;
+            background = 0x89cb;
             bonusStagesCleared = 0x89fa;
             wins = 0x89f9;
             print("  => detected Street Fighter II - The World Warrior");
@@ -133,7 +133,7 @@ init
         ||  game.MainWindowTitle.Contains("[sf2dkot2]")
         ||  game.MainWindowTitle.Contains("[sf2dongb]")
         ||  game.MainWindowTitle.Contains("[sf2koryu]")
-        ||  game.MainWindowTitle.Contains("[sf2level]")
+        ||  game.MainWindowTitle.Contains("[sf2background]")
         ||  game.MainWindowTitle.Contains("[sf2m1]")
         ||  game.MainWindowTitle.Contains("[sf2m10]")
         ||  game.MainWindowTitle.Contains("[sf2m2]")
@@ -161,7 +161,7 @@ init
                   "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";
                   
             p1RoundsWon = 0x864e;
-            level = 0x89c1;
+            background = 0x89bf;
             print("  => detected Street Fighter II - Champion Edition");
         }
         
@@ -195,7 +195,7 @@ init
             
             p1RoundsWon = 0x875e;
             isCharacterSelected = 0x8be0;
-            level = 0x8bcf;
+            background = 0x8bcf;
             wins = 0x8bd1;
             bonusStagesCleared = 0x8c02;
             
@@ -219,16 +219,16 @@ init
             
             p1RoundsWon = 0x87de;
             isCharacterSelected = 0x8c60;
-            level = 0x8c4f;
+            background = 0x8c4f;
             wins = 0x8c51;
             bonusStagesCleared = 0;          
             
             print("  => detected Super Street Fighter II - Turbo");
         
         }
-
-
-
+        
+        
+        
         long membase = 0;
         print("Scanning memory...");
         foreach (var page in game.MemoryPages(true))
@@ -253,7 +253,7 @@ init
         {
             new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(p1RoundsWon) )) { Name = "p1RoundsWon" },
             new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(isCharacterSelected) )) { Name = "isCharacterSelected" },
-            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(level) )) { Name = "level" },
+            new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(background) )) { Name = "background" },
             new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(bonusStagesCleared) )) { Name = "bonusStagesCleared" },
             new MemoryWatcher<byte>((IntPtr)(membase + FixAddress(wins) )) { Name = "wins" },
             new MemoryWatcher<ushort>((IntPtr)(membase + gameState0 )) { Name = "gameState0" },
@@ -318,7 +318,7 @@ split
 {
     if (vars.watchers["p1RoundsWon"].Current == 2
      && vars.watchers["p1RoundsWon"].Old == 1
-     && vars.watchers["level"].Current == 8)
+     && vars.watchers["background"].Current == 8)
     {
         print("  => Dictator defeated!");
         return true;
