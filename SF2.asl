@@ -44,7 +44,7 @@ init
         int isCharacterSelected = 0x89d0;
         int level = 0x89bf;
         int bonusStagesCleared = 0x89ee;
-        int wins = 0x89cd; // 89ed?
+        int wins = 0x89ed;
         int gameState0 = 0x8000;
         int gameState1 = 0x8004;
         
@@ -159,6 +159,9 @@ init
         {
             sig = "00 00 00 00 00 00 F6 08 FF 00 50 02 FF 00 90 02" +
                   "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";
+                  
+            p1RoundsWon = 0x864e;
+            level = 0x89c1;
             print("  => detected Street Fighter II - Champion Edition");
         }
         
@@ -223,9 +226,9 @@ init
             print("  => detected Super Street Fighter II - Turbo");
         
         }
-        
-        
-        
+
+
+
         long membase = 0;
         print("Scanning memory...");
         foreach (var page in game.MemoryPages(true))
@@ -305,6 +308,7 @@ reset
 {
     if (vars.watchers["gameState0"].Current == 0 && vars.watchers["gameState1"].Current == 0)
     {
+        print("  => reset");
         return true;
     }
 }
