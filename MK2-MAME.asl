@@ -230,7 +230,8 @@ reset
 split
 {
     // tower
-    if (vars.watchers["ladderPos"].Current > vars.watchers["ladderPos"].Old)
+    if (vars.watchers["ladderPos"].Current > vars.watchers["ladderPos"].Old
+    && !settings["onlyShao"])
     {
         print("TOWER SPLIT");
         return true;
