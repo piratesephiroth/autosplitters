@@ -133,7 +133,6 @@ init
         ||  game.MainWindowTitle.Contains("[sf2dkot2]")
         ||  game.MainWindowTitle.Contains("[sf2dongb]")
         ||  game.MainWindowTitle.Contains("[sf2koryu]")
-        ||  game.MainWindowTitle.Contains("[sf2background]")
         ||  game.MainWindowTitle.Contains("[sf2m1]")
         ||  game.MainWindowTitle.Contains("[sf2m10]")
         ||  game.MainWindowTitle.Contains("[sf2m2]")
